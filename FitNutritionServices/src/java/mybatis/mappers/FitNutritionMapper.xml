@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="FitNutrition">
+    
+    <insert id="registrarMedico" parameterType="pojos.Medico">
+        INSERT INTO medico (nombre, apellidos, fechaNacimiento, idGenero, domicilio, numeroPersonal, numeroCedula, contraseña)
+        VALUES (#{nombre},#{apellidos},#{fechaNacimiento},#{idGenero},#{domicilio},#{numeroPersonal},#{numeroCedula},#{contraseña})
+    </insert>
+    
+    <update id="actualizarMedico" parameterType="pojos.Medico">
+        UPDATE medico SET nombre = #{nombre}, apellidos = #{apellidos}, fechaNacimiento = #{fechaNacimiento}, idGenero = #{idGenero}, domicilio = #{domicilio} ,numeroCedula = #{numeroCedula} ,contraseña = #{contraseña} ,fotografia = #{fotografia}
+        WHERE idMedico = #{idMedico}
+    </update>
+    
+    <delete id="eliminarMedico" parameterType="int">
+        DELETE FROM medico WHERE idMedico = #{idMedico}
+    </delete>
+       
+    <select id="listarMedicos" resultType="pojos.Medico" >
+        SELECT 
+         idMedico,
+         nombre,
+         apellidos,
+         fechaNacimiento,
+         tipoGenero.genero as genero,
+         domicilio,
+         numeroPersonal,
+         numeroCedula,
+         tipoEstado.status as estado
+         FROM medico
+         INNER JOIN tipoGenero ON medico.idGenero = tipoGenero.idGenero
+         INNER JOIN tipoEstado ON medico.idEstado = tipoEstado.idEstado
+    </select>
+    
+    <select id="getTiposGeneros" resultType="pojos.TipoGenero" >
+        SELECT 
+         idGenero,
+         genero
+        FROM tipoGenero
+    </select>
+    
+    <select id="getEstados" resultType="pojos.Estado" >
+        SELECT 
+         idEstado,
+         nombre
+        FROM estado
+    </select>
+    
+    <select id="loginAdmin" resultType="pojos.Administrador" parameterType="map">
+        SELECT 
+         idAdministrador,
+         usuario
+        FROM administrador
+        WHERE usuario = #{user} AND contraseña = #{password}
+    </select>
+    
+    <select id="loginMedico" resultType="pojos.Medico" parameterType="map">
+        SELECT 
+         idMedico,
+         nombre,
+        apellidos
+        FROM medico
+        WHERE numeroPersonal = #{user} AND contraseña = #{password}
+    </select>
+    
+    <update id="enviarImgMedico" parameterType="pojos.Medico">
+        UPDATE medico SET fotografia = #{fotografia}
+        WHERE idMedico = #{idMedico}
+    </update>
+    
+    <select id="getImgMedico" resultType="pojos.Medico" parameterType="int">
+        SELECT
+         idMedico,
+         nombre,
+         fotografia
+        FROM medico
+        WHERE idMedico = #{idMedico}
+    </select>
+</mapper>
+
